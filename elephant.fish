@@ -39,7 +39,7 @@ function elephant -d "Minimal CLI for Fedora LAMP stack and VirtualHosts"
             if test (count $argv) -eq 3
                 set DOMAIN_NAME $argv[3]
             else
-                set DOMAIN_NAME "$PROJECT_NAME.test"
+                set DOMAIN_NAME "$PROJECT_NAME.elephant"
             end
 
             set -l CONF_FILE "/etc/httpd/conf.d/$DOMAIN_NAME.conf"
@@ -78,7 +78,7 @@ function elephant -d "Minimal CLI for Fedora LAMP stack and VirtualHosts"
             if string match -q "*.*" -- $argv[2]
                 set DOMAIN_NAME $argv[2]
             else
-                set DOMAIN_NAME "$argv[2].test"
+                set DOMAIN_NAME "$argv[2].elephant"
             end
 
             set -l CONF_FILE "/etc/httpd/conf.d/$DOMAIN_NAME.conf"

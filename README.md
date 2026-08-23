@@ -25,41 +25,49 @@
                               ▌                   
 ```
 
-A simple Fish CLI for managing a local LAMP development environment on Fedora.
+# those-elephant-bruh
 
-It can start and stop the LAMP services, create local development domains, configure Apache, and handle the required SELinux labels.
+A minimal Fish CLI for managing a local LAMP stack and Apache VirtualHosts on Fedora.
 
 ## Features
 
-* Start or stop Apache, MariaDB, and PHP-FPM together
-* Map project directories to local domains
-* Generate Apache VirtualHost configurations
-* Update `/etc/hosts` automatically
-* Apply the required SELinux labels
+* Start and stop Apache, MariaDB, and PHP-FPM together
+* Check the status of each service
+* Link any existing project directory to a local domain
+* Configure Apache and `/etc/hosts` automatically
+* Apply the required SELinux context
 * Remove routing without deleting project files
 
 ## Requirements
 
 * Fedora Linux
 * Fish shell
-* Apache, MariaDB, PHP, and PHP-FPM
+* Apache
+* MariaDB
+* PHP and PHP-FPM
 
 Install the required packages:
 
 ```bash
-sudo dnf install httpd mariadb-server php php-fpm
+sudo dnf install fish httpd mariadb-server php php-fpm policycoreutils
 ```
 
 ## Installation
 
-Download the Fish function:
+Download the function into your Fish configuration:
 
 ```bash
+mkdir -p ~/.config/fish/functions
+
 curl -o ~/.config/fish/functions/elephant.fish \
   https://raw.githubusercontent.com/nurmareko/those-elephant-bruh/main/elephant.fish
 ```
 
-Allow Apache to access project directories inside your home directory:
+Fish will automatically load the function when you run `elephant`.
+
+### SELinux setup
+
+If your projects are stored inside your home directory, allow Apache to access them:
 
 ```bash
 sudo setsebool -P httpd_enable_homedirs 1
@@ -76,7 +84,7 @@ Run `elephant` without arguments to display the available commands:
 elephant
 ```
 
-### Manage the LAMP stack
+### Manage the stack
 
 ```bash
 elephant wake
@@ -84,54 +92,60 @@ elephant sleep
 elephant status
 ```
 
-Available aliases:
-
 | Command  | Aliases          | Description                        |
 | -------- | ---------------- | ---------------------------------- |
 | `wake`   | `start`, `up`    | Start Apache, MariaDB, and PHP-FPM |
-| `sleep`  | `stop`, `down`   | Stop the services                  |
-| `status` | `check`, `pulse` | Show the current service status    |
+| `sleep`  | `stop`, `down`   | Stop all stack services            |
+| `status` | `check`, `pulse` | Show the status of each service    |
 
 ### Link a project
 
-By default, projects are stored in `~/Projects`. You can change `BASE_DIR` inside `elephant.fish`.
+The project directory must already exist.
+
+Link the current directory:
 
 ```bash
-elephant link example-app
+cd ~/Code/example-app
+elephant link .
 ```
 
-This command:
-
-* Creates `~/Projects/example-app` if it does not exist
-* Adds a starter `index.php` when creating a new project
-* Configures Apache
-* Maps `example-app.test` in `/etc/hosts`
-* Applies the required SELinux labels
-
-The project will be available at:
+The default domain is based on the directory name:
 
 ```text
-http://example-app.test
+http://example-app.elephant
 ```
 
-To use a custom local domain:
+You can also provide a relative or absolute path:
 
 ```bash
-elephant link example-app example.local
+elephant link ./example-app
+elephant link /home/user/Code/example-app
+```
+
+To use a custom domain, provide it as the second argument:
+
+```bash
+elephant link ./example-app example.local
+```
+
+This creates:
+
+```text
+./example-app → http://example.local
 ```
 
 ### Unlink a project
 
-Remove the default local domain:
+Remove a default `.elephant` domain using the project name:
 
 ```bash
 elephant unlink example-app
 ```
 
-Remove a custom local domain:
+Remove a custom domain using its full name:
 
 ```bash
 elephant unlink example.local
 ```
 
-Unlinking removes only the Apache configuration and `/etc/hosts` entry. It does not delete or modify the project directory.
+Unlinking removes the Apache VirtualHost and `/etc/hosts` entry. The project directory and its contents are not modified.

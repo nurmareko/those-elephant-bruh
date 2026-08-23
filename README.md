@@ -25,10 +25,6 @@
                               ▌                   
 ```
 
-# those-elephant-bruh
-
-A minimal Fish CLI for managing a local LAMP stack and Apache VirtualHosts on Fedora.
-
 ## Features
 
 * Start and stop Apache, MariaDB, and PHP-FPM together

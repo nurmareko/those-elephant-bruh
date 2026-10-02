@@ -27,7 +27,7 @@
 
 ## Features
 
-* Start and stop Apache, MariaDB, and PHP-FPM together
+* Start and stop Apache, MariaDB, PostgreSQL, and PHP-FPM together
 * Check the status of each service
 * Link any existing project directory to a local domain
 * Configure Apache and `/etc/hosts` automatically
@@ -40,12 +40,29 @@
 * Fish shell
 * Apache
 * MariaDB
+* PostgreSQL (Fedora's `postgresql` service)
 * PHP and PHP-FPM
 
 Install the required packages:
 
 ```bash
-sudo dnf install fish httpd mariadb-server php php-fpm policycoreutils
+sudo dnf install fish httpd mariadb-server postgresql-server postgresql php php-fpm php-pgsql policycoreutils
+```
+
+### PostgreSQL setup
+
+Before the first `elephant wake`, initialize PostgreSQL once on a fresh installation:
+
+```bash
+sudo postgresql-setup --initdb
+```
+
+Skip this step if you already have an initialized PostgreSQL database cluster. Elephant manages the service alongside MariaDB; it does not create application databases or users. The `php-pgsql` package provides PostgreSQL support for PHP.
+
+After starting the stack, you can open an administrative PostgreSQL session with:
+
+```bash
+sudo -u postgres psql
 ```
 
 ## Installation
@@ -90,7 +107,7 @@ elephant status
 
 | Command  | Aliases          | Description                        |
 | -------- | ---------------- | ---------------------------------- |
-| `wake`   | `start`, `up`    | Start Apache, MariaDB, and PHP-FPM |
+| `wake`   | `start`, `up`    | Start Apache, MariaDB, PostgreSQL, and PHP-FPM |
 | `sleep`  | `stop`, `down`   | Stop all stack services            |
 | `status` | `check`, `pulse` | Show the status of each service    |
 

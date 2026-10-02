@@ -1,4 +1,4 @@
-function elephant -d "Minimal CLI for Fedora LAMP stack and VirtualHosts"
+function elephant -d "Minimal CLI for Fedora LAMP stack, PostgreSQL, and VirtualHosts"
     set -l SUBCOMMAND help
 
     if test (count $argv) -gt 0
@@ -8,18 +8,19 @@ function elephant -d "Minimal CLI for Fedora LAMP stack and VirtualHosts"
     switch $SUBCOMMAND
         case wake start up
             echo "waking the stack..."
-            sudo systemctl start httpd mariadb php-fpm
+            sudo systemctl start httpd mariadb postgresql php-fpm
             echo "stack is awake."
 
         case sleep stop down
             echo "putting the stack to sleep..."
-            sudo systemctl stop httpd mariadb php-fpm
+            sudo systemctl stop httpd mariadb postgresql php-fpm
             echo "stack is asleep."
 
         case status check pulse
             echo "stack status:"
             echo "  apache:  " (systemctl is-active httpd)
             echo "  mariadb: " (systemctl is-active mariadb)
+            echo "  postgres:" (systemctl is-active postgresql)
             echo "  php-fpm: " (systemctl is-active php-fpm)
 
         case link
@@ -97,11 +98,11 @@ function elephant -d "Minimal CLI for Fedora LAMP stack and VirtualHosts"
             echo "link removed. project files were kept intact."
 
         case '*'
-            echo "minimal LAMP manager for fedora"
+            echo "minimal LAMP and PostgreSQL manager for fedora"
             echo "usage: elephant <command>"
             echo ""
             echo "commands:"
-            echo "  wake    - start apache, mariadb, and php-fpm"
+            echo "  wake    - start apache, mariadb, postgresql, and php-fpm"
             echo "  sleep   - stop the stack services"
             echo "  status  - check if services are running"
             echo "  link    - connect a project path to a local domain"
